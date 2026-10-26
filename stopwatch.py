@@ -43,15 +43,25 @@ def stop():
         elapsed += int(root.tk.call('clock', 'milliseconds')) - start_time
         running = False
 
-# Make the time display and the Start and Stop buttons.
+def reset():
+    global running, elapsed
+    # Stop the stopwatch and clear the saved time.
+    running = False
+    elapsed = 0
+    # Show the reset time. While running, the display shows seconds:hundredths.
+    time_label.config(text="00:00:00")
+
+# Make the time display and the three buttons.
 time_label = tk.Label(root, text="00:00:00", font=("Arial", 28, "bold"))
 start_btn = tk.Button(root, text="Start", command=start)
 stop_btn = tk.Button(root, text="Stop", command=stop)
+reset_btn = tk.Button(root, text="Reset", command=reset)
 
 # Place the display and buttons in the window from top to bottom.
 time_label.pack()
 start_btn.pack()
 stop_btn.pack()
+reset_btn.pack()
 
 # Start updating the display and keep the window open for button clicks.
 update()
