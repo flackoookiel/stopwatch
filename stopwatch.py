@@ -4,8 +4,9 @@ import theme
 # Make the stopwatch window and set its title and size.
 root = tk.Tk()
 root.title("Stopwatch")
-root.geometry("300x150")
+root.geometry("360x220")
 root.configure(bg=theme.BG)
+root.resizable(False, False)
 
 # These variables keep track of whether the stopwatch is running,
 # how much time has already passed, and when the current run started.
@@ -67,9 +68,10 @@ def make_button(parent, text, command, bg, fg):
         bd=0,
         width=theme.BTN_WIDTH,
         pady=theme.PAD_INNER,
+        cursor="hand2",
     )
 
-# Make the time display and the three buttons.
+# Time display, centered across the window width.
 time_label = tk.Label(
     root,
     text="00:00:00",
@@ -78,15 +80,19 @@ time_label = tk.Label(
     fg=theme.FG,
     pady=theme.PAD_OUTER,
 )
-start_btn = make_button(root, "Start", start, theme.BTN_START_BG, theme.BTN_START_FG)
-stop_btn  = make_button(root, "Stop",  stop,  theme.BTN_STOP_BG,  theme.BTN_STOP_FG)
-reset_btn = make_button(root, "Reset", reset, theme.BTN_RESET_BG, theme.BTN_RESET_FG)
-
-# Place the display and buttons in the window from top to bottom.
 time_label.pack(fill="x")
-start_btn.pack()
-stop_btn.pack()
-reset_btn.pack()
+
+# A frame to hold the buttons side by side.
+btn_frame = tk.Frame(root, bg=theme.BG)
+btn_frame.pack(pady=(0, theme.PAD_OUTER))
+
+start_btn = make_button(btn_frame, "Start", start, theme.BTN_START_BG, theme.BTN_START_FG)
+stop_btn  = make_button(btn_frame, "Stop",  stop,  theme.BTN_STOP_BG,  theme.BTN_STOP_FG)
+reset_btn = make_button(btn_frame, "Reset", reset, theme.BTN_RESET_BG, theme.BTN_RESET_FG)
+
+start_btn.pack(side="left", padx=4)
+stop_btn.pack(side="left", padx=4)
+reset_btn.pack(side="left", padx=4)
 
 # Start updating the display and keep the window open for button clicks.
 update()
