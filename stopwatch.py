@@ -17,47 +17,44 @@ start_time = 0
 def update():
     # Update the display while the stopwatch is running.
     if running:
-        # Find the time passed since Start and add time saved before Stop.
         total = elapsed + (int(root.tk.call('clock', 'milliseconds')) - start_time)
 
-        # Break the total into minutes, seconds, and hundredths.
         minutes    = total // 60000
         seconds    = (total // 1000) % 60
         hundredths = (total % 1000) // 10
 
-        # Show the time as mm:ss:cc, matching the initial label.
         time_label.config(
             text="{:02d}:{:02d}:{:02d}".format(minutes, seconds, hundredths)
         )
 
-    # Run this function again after 50 milliseconds to refresh the display.
     root.after(50, update)
 
 def start():
     global running, start_time
-    # Start only if the stopwatch is not already running.
     if not running:
-        # Save the start time and mark the stopwatch as running.
         start_time = int(root.tk.call('clock', 'milliseconds'))
         running = True
 
 def stop():
     global running, elapsed
-    # Stop only if the stopwatch is running.
     if running:
-        # Save the time passed so the next Start can continue from here.
         elapsed += int(root.tk.call('clock', 'milliseconds')) - start_time
         running = False
 
 def reset():
     global running, elapsed
-    # Stop the stopwatch and clear the saved time.
     running = False
     elapsed = 0
     time_label.config(text="00:00:00")
 
+def toggle():
+    """Start if stopped, stop if running — used by the Space shortcut."""
+    if running:
+        stop()
+    else:
+        start()
+
 def make_button(parent, text, command, bg, fg):
-    """Create a flat, themed button."""
     return tk.Button(
         parent,
         text=text,
@@ -72,9 +69,10 @@ def make_button(parent, text, command, bg, fg):
         width=theme.BTN_WIDTH,
         pady=theme.PAD_INNER,
         cursor="hand2",
+        takefocus=0,     # keep keyboard focus off buttons — we bind globally
     )
 
-# Time display, centered across the window width.
+# Time display.
 time_label = tk.Label(
     root,
     text="00:00:00",
@@ -85,7 +83,7 @@ time_label = tk.Label(
 )
 time_label.pack(fill="x")
 
-# A frame to hold the buttons side by side.
+# Button row.
 btn_frame = tk.Frame(root, bg=theme.BG)
 btn_frame.pack(pady=(0, theme.PAD_OUTER))
 
@@ -97,6 +95,18 @@ start_btn.pack(side="left", padx=4)
 stop_btn.pack(side="left", padx=4)
 reset_btn.pack(side="left", padx=4)
 
-# Start updating the display and keep the window open for button clicks.
+# Keyboard shortcuts.
+def on_space(event):
+    toggle()
+    return "break"
+
+def on_reset(event):
+    reset()
+    return "break"
+
+root.bind("<space>", on_space)
+root.bind("<r>", on_reset)
+root.bind("<R>", on_reset)
+
 update()
 root.mainloop()
