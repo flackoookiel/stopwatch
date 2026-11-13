@@ -20,12 +20,15 @@ def update():
         # Find the time passed since Start and add time saved before Stop.
         total = elapsed + (int(root.tk.call('clock', 'milliseconds')) - start_time)
 
-        # Change the time from milliseconds into seconds and hundredths.
-        seconds = total // 1000
-        millis = (total % 1000) // 10
+        # Break the total into minutes, seconds, and hundredths.
+        minutes    = total // 60000
+        seconds    = (total // 1000) % 60
+        hundredths = (total % 1000) // 10
 
-        # Show the time as seconds:hundredths, such as 12:34.
-        time_label.config(text="{:02d}:{:02d}".format(seconds, millis))
+        # Show the time as mm:ss:cc, matching the initial label.
+        time_label.config(
+            text="{:02d}:{:02d}:{:02d}".format(minutes, seconds, hundredths)
+        )
 
     # Run this function again after 50 milliseconds to refresh the display.
     root.after(50, update)
